@@ -1,1 +1,11 @@
-{"name":"Theo dõi lũ","short_name":"Flood Watch","start_url":"/","display":"standalone","background_color":"#f5f7fb","theme_color":"#172033","icons":[]}
+{
+  "name": "Theo dõi lũ",
+  "short_name": "Flood Watch",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#172033",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
