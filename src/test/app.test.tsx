@@ -21,6 +21,6 @@ describe('App dashboard', () => {
     fireEvent.change(input, { target: { value: '999, 106' } });
     fireEvent.click(screen.getByRole('button', { name: 'Thêm' }));
     expect(input.value).toBe('999, 106');
-    expect(screen.getByRole('alert').textContent).toContain('Vĩ độ phải nằm trong khoảng -90 đến 90.');
+    expect(screen.getByRole('alert').textContent).toContain('Vĩ độ phải nằm trong [-90, 90].');
   });
 });
