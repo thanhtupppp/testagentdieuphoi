@@ -1,0 +1,5 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FloodObservation, Location } from '../types';
+import { fetchFlood } from '../api';
+import { DEFAULT_POLL_MINUTES } from '../../../lib/constants';
+export function useFlood(location: Location|undefined,pollMinutes=DEFAULT_POLL_MINUTES){const [data,setData]=useState<FloodObservation>();const [loading,setLoading]=useState(false);const [error,setError]=useState<string>();const controller=useRef<AbortController|null>(null);const load=useCallback(async()=>{if(!location)return;controller.current?.abort();const c=new AbortController();controller.current=c;setLoading(true);setError(undefined);try{setData(await fetchFlood(location,c.signal));}catch(e){if((e as Error).name!=='AbortError')setError(e instanceof Error?e.message:'Không thể tải dữ liệu.');}finally{if(controller.current===c)setLoading(false);}},[location]);useEffect(()=>{void load();const id=window.setInterval(()=>void load(),Math.max(5,pollMinutes)*60000);return()=>{window.clearInterval(id);controller.current?.abort();};},[load,pollMinutes]);return{data,loading,error,refresh:load};}

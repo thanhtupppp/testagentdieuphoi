@@ -1,0 +1,1 @@
+export const formatTimestamp=(iso:string,timeZone:string)=>new Intl.DateTimeFormat('vi-VN',{dateStyle:'medium',timeStyle:'short',timeZone}).format(new Date(iso)); export const isStale=(fetchedAt:string,maxMinutes=90)=>Date.now()-Date.parse(fetchedAt)>maxMinutes*60000;

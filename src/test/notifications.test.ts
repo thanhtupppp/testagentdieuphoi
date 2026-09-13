@@ -1,0 +1,2 @@
+import { describe,expect,it,vi,beforeEach } from 'vitest'; import { enableNotifications,notifyRisk } from '../features/notifications/notifications';
+describe('notifications',()=>{beforeEach(()=>localStorage.clear());it('does not request permission automatically',()=>{expect(enableNotifications).toBeTypeOf('function')});it('does nothing when permission is denied',async()=>{Object.defineProperty(window,'Notification',{value:{permission:'denied',requestPermission:vi.fn()},configurable:true});expect(await notifyRisk('x','A','warning')).toBe(false)})});
