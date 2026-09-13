@@ -3,20 +3,19 @@ import { notifyRisk, requestNotificationPermission } from '../features/notificat
 
 class FakeNotification {
   static permission: NotificationPermission = 'default';
-  static requestPermission = vi.fn(async () => FakeNotification.permission);
+  static requestPermission = vi.fn(async () => 'granted' as NotificationPermission);
   constructor(public readonly title: string, public readonly options?: NotificationOptions) {}
 }
 
 beforeEach(() => {
   localStorage.clear();
-  vi.restoreAllMocks();
+  vi.clearAllMocks();
   Object.defineProperty(window, 'Notification', { value: FakeNotification, configurable: true, writable: true });
   FakeNotification.permission = 'default';
 });
 
 describe('notifications', () => {
-  it('requests permission only when explicitly called', async () => {
-    FakeNotification.permission = 'granted';
+  it('requests permission only when explicitly called from the default state', async () => {
     expect(await requestNotificationPermission()).toBe('granted');
     expect(FakeNotification.requestPermission).toHaveBeenCalledTimes(1);
   });
