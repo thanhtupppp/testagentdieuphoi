@@ -1,0 +1,4 @@
+import { useEffect } from 'react';
+import { createMqttClient } from '../services/mqtt.service';
+import { useFloodStore } from '../store';
+export function useMQTT(topics:string[]) { const upsert = useFloodStore(s=>s.upsertSensor); useEffect(()=>{ const client=createMqttClient(); client.on('connect',()=>topics.forEach(t=>client.subscribe(t))); client.on('message',(topic,payload)=>{ try { const value=Number(payload.toString()); if(!Number.isFinite(value)) return; const parts=topic.split('/'); if(parts.length<4)return; const [,,node,metric]=parts; const old=useFloodStore.getState().sensors[node]; if(!old)return; upsert({...old, ...(metric==='water_cm'?{waterCm:value}:metric==='rain_mm'?{rainMm:value}:metric==='battery_pct'?{batteryPct:value}:{}),updatedAt:new Date().toISOString()}); } catch {} }); return ()=>client.end(true); },[topics.join('|'),upsert]); }

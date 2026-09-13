@@ -1,0 +1,1 @@
+export function Dashboard(){return <section className="rounded-xl border border-slate-800 bg-slate-900 p-5"><h2 className="font-semibold">Tổng quan</h2><p className="mt-2 text-sm text-slate-400">Hạ tầng dashboard đã sẵn sàng cho dữ liệu MQTT realtime.</p></section>}
