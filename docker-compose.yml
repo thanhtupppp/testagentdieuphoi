@@ -1,0 +1,26 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    profiles: [dev]
+    volumes:
+      - ./apps/web-flood-alert:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_MQTT_WS_URL: ${VITE_MQTT_WS_URL:-ws://localhost:9001}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000/api}
+volumes:
+  mosquitto_data:
+  mosquitto_log:
