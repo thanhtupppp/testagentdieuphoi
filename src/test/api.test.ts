@@ -12,7 +12,7 @@ beforeEach(() => vi.restoreAllMocks());
 describe('flood API parser', () => {
   it('normalizes nullable discharge values and classifies through the domain module', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      timezone: 'Asia/Ho_Chi_Minh', daily: { time: ['2026-09-13', '2026-09-14', '2026-09-15'], river_discharge: [null, 10, 100] },
+      timezone: 'Asia/Ho_Chi_Minh', daily: { time: ['2026-09-13', '2026-09-14', '2026-09-15', '2026-09-16'], river_discharge: [null, 10, 20, 100] },
     }), { status: 200, headers: { 'content-type': 'application/json' } })));
     const result = await fetchFlood(location);
     expect(result.forecast[0].discharge).toBeUndefined();
