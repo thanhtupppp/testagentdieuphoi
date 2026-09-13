@@ -3,13 +3,8 @@ import { fetchFlood, geocode } from '../features/flood/api';
 import type { Location } from '../features/flood/types';
 
 const location: Location = {
-  id: 'x',
-  name: 'Test',
-  latitude: 10,
-  longitude: 106,
-  notificationsEnabled: false,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  id: 'x', name: 'Test', latitude: 10, longitude: 106,
+  notificationsEnabled: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
 };
 
 beforeEach(() => vi.restoreAllMocks());
@@ -17,19 +12,16 @@ beforeEach(() => vi.restoreAllMocks());
 describe('flood API parser', () => {
   it('normalizes nullable discharge values and classifies through the domain module', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      timezone: 'Asia/Ho_Chi_Minh',
-      daily: { time: ['2026-09-13', '2026-09-14'], river_discharge: [null, 100] },
+      timezone: 'Asia/Ho_Chi_Minh', daily: { time: ['2026-09-13', '2026-09-14'], river_discharge: [null, 10] },
     }), { status: 200, headers: { 'content-type': 'application/json' } })));
     const result = await fetchFlood(location);
     expect(result.forecast[0].discharge).toBeUndefined();
-    expect(result.currentDischarge).toBe(100);
+    expect(result.currentDischarge).toBe(10);
     expect(result.risk.level).toBe('normal');
   });
 
   it('rejects mismatched time and value arrays', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      daily: { time: ['2026-09-13'], river_discharge: [10, 20] },
-    }), { status: 200 })));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ daily: { time: ['2026-09-13'], river_discharge: [10, 20] } }), { status: 200 })));
     await expect(fetchFlood(location)).rejects.toThrow('khác độ dài');
   });
 
