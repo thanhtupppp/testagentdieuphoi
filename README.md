@@ -5,7 +5,7 @@
 ## Chạy
 
 ```bash
-npm install
+npm ci
 npm run dev
 npm run test
 npm run lint
@@ -16,18 +16,21 @@ Không cần API key. Frontend gọi trực tiếp Open-Meteo Flood API và Geoc
 
 ## Chức năng
 
-- Tìm địa điểm, nhập tọa độ hoặc dùng Geolocation sau thao tác người dùng.
-- Lưu nhiều điểm theo dõi trong localStorage; đổi tên, chọn, xóa và bật/tắt thông báo theo điểm.
-- Dữ liệu lưu lượng sông 7 ngày từ Open-Meteo, trạng thái loading/error/empty và cập nhật tự động.
-- Bản đồ Leaflet/OpenStreetMap với marker và popup theo trạng thái.
-- Thông báo dùng Notification API và Service Worker, có cooldown/chống lặp.
-- TypeScript strict, validation tọa độ, test cho domain logic và storage/notification.
+- Tìm địa điểm, nhập tọa độ hoặc dùng Geolocation sau thao tác người dùng; lỗi permission/timeout được hiển thị rõ.
+- Lưu nhiều điểm theo dõi trong localStorage; đổi tên, chọn mặc định, xóa và bật/tắt thông báo theo điểm.
+- Dữ liệu lưu lượng sông 7 ngày từ Open-Meteo, loading/error/empty/stale states và polling tự hủy khi unmount.
+- Bản đồ Leaflet/OpenStreetMap với marker an toàn, popup và trạng thái theo rủi ro.
+- Xu hướng forecast bằng SVG nhẹ, không phụ thuộc Recharts.
+- Notification API + Service Worker, permission chỉ sau thao tác người dùng, cooldown và escalation dedupe.
+- TypeScript strict, Zod schema validation, AbortController, timeout HTTP và test domain/API/UI/storage/notification.
 
 ## Rủi ro và giới hạn
 
-Các mức `Bình thường / Theo dõi / Cảnh báo / Nguy hiểm` trong ứng dụng là **ước tính tham khảo**, không phải cảnh báo chính thức. Khi không có ngưỡng thủy văn chính thức cho địa điểm, ứng dụng dùng phân vị của chuỗi dự báo trả về và gắn nhãn `estimated`. Không có dữ liệu **không** được hiểu là an toàn.
+Các mức `Bình thường / Theo dõi / Cảnh báo / Nguy hiểm` là **ước tính tham khảo**, không phải cảnh báo chính thức. Khi không có ngưỡng thủy văn chính thức cho địa điểm, ứng dụng dùng phân vị của chuỗi dự báo trả về và gắn nhãn `estimated`. Không có dữ liệu được coi là **chưa xác định**, không phải an toàn.
 
 Flood API dựa trên dữ liệu mô hình GloFAS và có độ phân giải không gian khoảng 5 km; kết quả có thể không đại diện cho một điểm cụ thể hoặc tình hình tại hiện trường. Người dùng phải tuân theo cảnh báo và hướng dẫn của cơ quan phòng chống thiên tai địa phương.
+
+Thông báo nền yêu cầu secure context (HTTPS hoặc localhost). Quyền thông báo không được yêu cầu lúc khởi động.
 
 Ứng dụng không lưu API key, mật khẩu hay dữ liệu nhạy cảm. localStorage chỉ chứa cấu hình điểm theo dõi do người dùng tạo.
 
@@ -40,4 +43,6 @@ Flood API dựa trên dữ liệu mô hình GloFAS và có độ phân giải kh
 
 ## Kiến trúc
 
-`features/flood` chứa API client, model, classifier và hook fetching; `features/locations` chứa storage adapter; `features/notifications` chứa permission/cooldown; `components` chứa bản đồ; `lib` chứa constants và validation. Request được hủy bằng AbortController khi đổi điểm hoặc unmount.
+`features/flood` chứa API client, schema, model, classifier và hook fetching; `features/locations` chứa storage adapter; `features/notifications` chứa permission/cooldown; `components` chứa bản đồ; `lib` chứa constants và validation. Request được hủy bằng AbortController khi đổi điểm hoặc unmount.
+
+CI dùng `npm ci` với `package-lock.json`, sau đó chạy lint, test và production build.
