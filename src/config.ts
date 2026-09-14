@@ -1,0 +1,4 @@
+import { z } from "zod";
+const configSchema = z.object({ SERVICE_NAME: z.string().trim().min(1).default("testagentdieuphoi"), ENVIRONMENT: z.string().trim().min(1).default("development"), HOST: z.string().trim().min(1).default("127.0.0.1"), PORT: z.coerce.number().int().min(1).max(65535).default(3000), READINESS_DEADLINE_MS: z.coerce.number().int().positive().max(30_000).default(2_000), STARTUP_COMPLETE: z.enum(["true", "false"]).default("true") });
+export interface AppConfig { serviceName: string; environment: string; host: string; port: number; readinessDeadlineMs: number; startupComplete: boolean; }
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig { const parsed = configSchema.parse(env); return { serviceName: parsed.SERVICE_NAME, environment: parsed.ENVIRONMENT, host: parsed.HOST, port: parsed.PORT, readinessDeadlineMs: parsed.READINESS_DEADLINE_MS, startupComplete: parsed.STARTUP_COMPLETE === "true" }; }
