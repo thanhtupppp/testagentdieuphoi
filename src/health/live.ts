@@ -1,3 +1,14 @@
 import type { RuntimeContract } from "../runtime/types.js";
-import { healthResponse } from "./response.js";
-export function liveProbe(contract: RuntimeContract) { return healthResponse(contract.service, contract.contractVersion, "ready", [], 0); }
+
+export interface LivenessResponse {
+  status: "alive";
+  service: string;
+  contractVersion: string;
+  timestamp: string;
+  checks: [];
+  durationMs: number;
+}
+
+export function liveProbe(contract: RuntimeContract): LivenessResponse {
+  return { status: "alive", service: contract.service, contractVersion: contract.contractVersion, timestamp: new Date().toISOString(), checks: [], durationMs: 0 };
+}
